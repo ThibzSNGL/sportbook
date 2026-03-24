@@ -80,12 +80,15 @@ if (registerForm) {
   registerForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const nom = document.getElementById("name").value.trim();
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const nom = `${firstName} ${lastName}`.trim();
+
     const email = document.getElementById("email").value.trim();
     const mot_de_passe = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirm-password").value.trim();
 
-    if (!nom || !email || !mot_de_passe || !confirmPassword) {
+    if (!firstName || !lastName || !email || !mot_de_passe || !confirmPassword) {
       showAuthMessage("Veuillez remplir tous les champs.", "error");
       return;
     }
