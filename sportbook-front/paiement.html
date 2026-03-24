@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportBook - Paiement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+:root {
+--blue-dark: #0f4ea3;
+--blue-main: #1f6fc5;
+--blue-light: #4f9ae3;
+--orange-main: #f08a2c;
+--orange-light: #f7ab4d;
+--text-dark: #123055;
+--text-soft: #5f7390;
+--white: #ffffff;
+--bg-light: #f4f9ff;
+--border: rgba(31, 111, 197, 0.12);
+--shadow: 0 18px 45px rgba(17, 74, 147, 0.12);
+--radius-lg: 28px;
+--radius-md: 18px;
+--radius-sm: 14px;
+--container: 1200px;
+}
+
+body {
+font-family: "Inter", sans-serif;
+background:
+radial-gradient(circle at top left, rgba(79, 154, 227, 0.16), transparent 30%),
+radial-gradient(circle at bottom right, rgba(240, 138, 44, 0.14), transparent 25%),
+linear-gradient(180deg, #f7fbff 0%, #edf5ff 100%);
+color: var(--text-dark);
+line-height: 1.6;
+min-height: 100vh;
+}
+
+a {
+text-decoration: none;
+color: inherit;
+}
+
+img {
+max-width: 100%;
+display: block;
+}
+
+.container {
+width: min(100% - 40px, var(--container));
+margin: 0 auto;
+}
+
+header {
+position: sticky;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(14px);
+background: rgba(255, 255, 255, 0.88);
+border-bottom: 1px solid rgba(31, 111, 197, 0.08);
+}
+
+.navbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 16px 0;
+gap: 20px;
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 14px;
+min-width: 0;
+}
+
+.brand img {
+width: 62px;
+height: 62px;
+object-fit: contain;
+}
+
+.brand-text {
+display: flex;
+flex-direction: column;
+line-height: 1.1;
+}
+
+.brand-text strong {
+font-size: 1.35rem;
+font-weight: 800;
+letter-spacing: -0.03em;
+color: var(--blue-dark);
+}
+
+.brand-text span {
+font-size: 0.86rem;
+font-weight: 600;
+color: var(--orange-main);
+text-transform: uppercase;
+letter-spacing: 0.12em;
+}
+
+.nav-links {
+display: flex;
+align-items: center;
+gap: 26px;
+}
+
+.nav-links a {
+font-size: 0.96rem;
+font-weight: 600;
+color: var(--text-dark);
+transition: 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+color: var(--blue-main);
+}
+
+.nav-actions {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border: none;
+border-radius: 999px;
+padding: 14px 24px;
+font-size: 0.97rem;
+font-weight: 700;
+cursor: pointer;
+transition: 0.25s ease;
+text-decoration: none;
+}
+
+.btn-outline {
+background: rgba(31, 111, 197, 0.07);
+color: var(--blue-dark);
+border: 1px solid rgba(31, 111, 197, 0.12);
+}
+
+.btn-outline:hover {
+background: rgba(31, 111, 197, 0.12);
+transform: translateY(-2px);
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--blue-main), var(--blue-dark));
+color: var(--white);
+box-shadow: 0 14px 26px rgba(31, 111, 197, 0.22);
+}
+
+.btn-primary:hover {
+transform: translateY(-2px);
+box-shadow: 0 18px 32px rgba(31, 111, 197, 0.26);
+}
+
+.page {
+padding: 64px 0 80px;
+}
+
+.page-head {
+text-align: center;
+margin-bottom: 34px;
+}
+
+.page-badge {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+padding: 10px 16px;
+border-radius: 999px;
+background: rgba(240, 138, 44, 0.12);
+color: #cb6d15;
+font-size: 0.88rem;
+font-weight: 700;
+margin-bottom: 16px;
+}
+
+.page-title {
+font-size: clamp(2.2rem, 4vw, 3.6rem);
+line-height: 1;
+letter-spacing: -0.05em;
+font-weight: 800;
+color: var(--blue-dark);
+margin-bottom: 14px;
+}
+
+.page-text {
+max-width: 760px;
+margin: 0 auto;
+font-size: 1.02rem;
+color: var(--text-soft);
+}
+
+.payment-grid {
+display: grid;
+grid-template-columns: 1.05fr 0.95fr;
+gap: 24px;
+align-items: start;
+}
+
+.card {
+background: rgba(255, 255, 255, 0.9);
+border: 1px solid var(--border);
+border-radius: 28px;
+box-shadow: var(--shadow);
+padding: 30px;
+}
+
+.card-title {
+font-size: 1.4rem;
+font-weight: 800;
+color: var(--blue-dark);
+margin-bottom: 18px;
+}
+
+.summary-list {
+display: grid;
+gap: 14px;
+}
+
+.summary-row {
+display: flex;
+justify-content: space-between;
+gap: 16px;
+padding: 14px 0;
+border-bottom: 1px solid rgba(31, 111, 197, 0.08);
+}
+
+.summary-row:last-child {
+border-bottom: none;
+}
+
+.summary-label {
+font-size: 0.95rem;
+font-weight: 600;
+color: var(--text-soft);
+}
+
+.summary-value {
+font-size: 0.98rem;
+font-weight: 700;
+color: var(--text-dark);
+text-align: right;
+}
+
+.total-row .summary-label,
+.total-row .summary-value {
+font-size: 1.08rem;
+color: var(--blue-dark);
+}
+
+.form-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 18px;
+}
+
+.field {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.field.full {
+grid-column: 1 / -1;
+}
+
+label {
+font-size: 0.95rem;
+font-weight: 700;
+color: var(--text-dark);
+}
+
+input {
+width: 100%;
+border: 1px solid rgba(31, 111, 197, 0.14);
+background: rgba(255, 255, 255, 0.96);
+border-radius: 16px;
+padding: 14px 16px;
+font-size: 0.98rem;
+font-family: inherit;
+color: var(--text-dark);
+outline: none;
+transition: 0.25s ease;
+}
+
+input:focus {
+border-color: var(--blue-main);
+box-shadow: 0 0 0 4px rgba(31, 111, 197, 0.1);
+}
+
+.message {
+margin-top: 18px;
+padding: 14px 16px;
+border-radius: 16px;
+font-size: 0.95rem;
+font-weight: 600;
+display: none;
+}
+
+.message.success {
+display: block;
+background: rgba(50, 178, 99, 0.12);
+color: #177543;
+border: 1px solid rgba(50, 178, 99, 0.18);
+}
+
+.message.error {
+display: block;
+background: rgba(226, 70, 70, 0.12);
+color: #b12626;
+border: 1px solid rgba(226, 70, 70, 0.18);
+}
+
+.security-box {
+margin-top: 20px;
+padding: 18px;
+border-radius: 20px;
+background: linear-gradient(135deg, rgba(31, 111, 197, 0.08), rgba(240, 138, 44, 0.1));
+border: 1px solid rgba(31, 111, 197, 0.1);
+}
+
+.security-box strong {
+display: block;
+font-size: 1rem;
+font-weight: 800;
+color: var(--blue-dark);
+margin-bottom: 6px;
+}
+
+.security-box p {
+font-size: 0.95rem;
+color: var(--text-soft);
+}
+
+footer {
+margin-top: 40px;
+border-top: 1px solid rgba(31, 111, 197, 0.08);
+background: rgba(255, 255, 255, 0.6);
+}
+
+.footer-inner {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+padding: 26px 0;
+}
+
+.footer-brand {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.footer-brand img {
+width: 48px;
+height: 48px;
+object-fit: contain;
+}
+
+.footer-brand strong {
+display: block;
+font-size: 1.05rem;
+color: var(--blue-dark);
+font-weight: 800;
+}
+
+.footer-brand span {
+display: block;
+font-size: 0.84rem;
+color: var(--text-soft);
+font-weight: 600;
+}
+
+.footer-links {
+display: flex;
+align-items: center;
+gap: 22px;
+flex-wrap: wrap;
+}
+
+.footer-links a {
+font-size: 0.95rem;
+font-weight: 600;
+color: var(--text-soft);
+transition: 0.25s ease;
+}
+
+.footer-links a:hover {
+color: var(--blue-main);
+}
+
+@media (max-width: 900px) {
+.navbar {
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.nav-links,
+.nav-actions {
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.payment-grid {
+grid-template-columns: 1fr;
+}
+
+.form-grid {
+grid-template-columns: 1fr;
+}
+
+.footer-inner {
+flex-direction: column;
+align-items: flex-start;
+}
+}
+
+@media (max-width: 640px) {
+.container {
+width: min(100% - 24px, var(--container));
+}
+
+.brand img {
+width: 52px;
+height: 52px;
+}
+
+.brand-text strong {
+font-size: 1.15rem;
+}
+
+.brand-text span {
+font-size: 0.76rem;
+}
+
+.card {
+padding: 22px;
+}
+
+.nav-links {
+gap: 16px;
+}
+
+.nav-actions {
+width: 100%;
+}
+
+.nav-actions .btn {
+flex: 1;
+}
+
+.footer-links {
+gap: 14px;
+}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="container">
+<nav class="navbar">
+<a href="index.html" class="brand">
+<img src="img/logo.png" alt="Logo SportBook">
+<div class="brand-text">
+<strong>SportBook</strong>
+<span>Réservez votre terrain</span>
+</div>
+</a>
+
+<div class="nav-links">
+<a href="index.html">Accueil</a>
+<a href="terrains.html">Terrains</a>
+<a href="reservations.html">Réservations</a>
+<a href="login.html">Connexion</a>
+</div>
+
+<div class="nav-actions">
+<a href="reservations.html" class="btn btn-outline">Mes réservations</a>
+<a href="terrains.html" class="btn btn-primary">Réserver</a>
+</div>
+</nav>
+</div>
+</header>
+
+<main class="page">
+<div class="container">
+<div class="page-head">
+<div class="page-badge">Paiement sécurisé</div>
+<h1 class="page-title">Finalisez votre réservation</h1>
+<p class="page-text">
+Vérifiez les informations de votre réservation puis complétez le paiement pour confirmer définitivement votre créneau.
+</p>
+</div>
+
+<div class="payment-grid">
+<div class="card">
+<h2 class="card-title">Informations de paiement</h2>
+<form id="payment-form" class="form-grid">
+<div class="field full">
+<label for="card-name">Nom sur la carte</label>
+<input type="text" id="card-name" placeholder="Ex : Zayd Idrissi">
+</div>
+
+<div class="field full">
+<label for="card-number">Numéro de carte</label>
+<input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+</div>
+
+<div class="field">
+<label for="card-date">Date d'expiration</label>
+<input type="text" id="card-date" placeholder="MM/AA" maxlength="5">
+</div>
+
+<div class="field">
+<label for="card-cvv">CVV</label>
+<input type="text" id="card-cvv" placeholder="123" maxlength="4">
+</div>
+
+<div class="field full">
+<button type="submit" class="btn btn-primary" style="width: 100%;">Payer maintenant</button>
+</div>
+</form>
+
+<div id="payment-message" class="message"></div>
+
+<div class="security-box">
+<strong>Paiement protégé</strong>
+<p>Cette page est une simulation front pour ton projet. Plus tard, tu pourras la relier à l’API de paiement ou à un mock backend.</p>
+</div>
+</div>
+
+<div class="card">
+<h2 class="card-title">Résumé de la réservation</h2>
+<div class="summary-list">
+<div class="summary-row">
+<div class="summary-label">Terrain</div>
+<div class="summary-value" id="summary-terrain">Five Arena - Paris 13</div>
+</div>
+
+<div class="summary-row">
+<div class="summary-label">Sport</div>
+<div class="summary-value" id="summary-sport">Football</div>
+</div>
+
+<div class="summary-row">
+<div class="summary-label">Date</div>
+<div class="summary-value" id="summary-date">25 mars 2026</div>
+</div>
+
+<div class="summary-row">
+<div class="summary-label">Créneau</div>
+<div class="summary-value" id="summary-slot">18:00 - 19:00</div>
+</div>
+
+<div class="summary-row">
+<div class="summary-label">Durée</div>
+<div class="summary-value">1 heure</div>
+</div>
+
+<div class="summary-row total-row">
+<div class="summary-label">Total</div>
+<div class="summary-value" id="summary-price">25 €</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<footer>
+<div class="container">
+<div class="footer-inner">
+<div class="footer-brand">
+<img src="img/logo.png" alt="Logo SportBook">
+<div>
+<strong>SportBook</strong>
+<span>Réservez votre terrain simplement</span>
+</div>
+</div>
+
+<div class="footer-links">
+<a href="index.html">Accueil</a>
+<a href="terrains.html">Terrains</a>
+<a href="reservations.html">Réservations</a>
+<a href="login.html">Connexion</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/paiement.js"></script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportBook - Mes réservations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+:root {
+--blue-dark: #0f4ea3;
+--blue-main: #1f6fc5;
+--orange-main: #f08a2c;
+--text-dark: #123055;
+--text-soft: #5f7390;
+--white: #ffffff;
+--border: rgba(31, 111, 197, 0.12);
+--shadow: 0 18px 45px rgba(17, 74, 147, 0.12);
+--container: 1200px;
+}
+
+body {
+font-family: "Inter", sans-serif;
+background:
+radial-gradient(circle at top left, rgba(79, 154, 227, 0.16), transparent 30%),
+radial-gradient(circle at bottom right, rgba(240, 138, 44, 0.14), transparent 25%),
+linear-gradient(180deg, #f7fbff 0%, #edf5ff 100%);
+color: var(--text-dark);
+line-height: 1.6;
+min-height: 100vh;
+}
+
+a {
+text-decoration: none;
+color: inherit;
+}
+
+img {
+max-width: 100%;
+display: block;
+}
+
+.container {
+width: min(100% - 40px, var(--container));
+margin: 0 auto;
+}
+
+header {
+position: sticky;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(14px);
+background: rgba(255, 255, 255, 0.88);
+border-bottom: 1px solid rgba(31, 111, 197, 0.08);
+}
+
+.navbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 16px 0;
+gap: 20px;
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 14px;
+min-width: 0;
+}
+
+.brand img {
+width: 62px;
+height: 62px;
+object-fit: contain;
+}
+
+.brand-text {
+display: flex;
+flex-direction: column;
+line-height: 1.1;
+}
+
+.brand-text strong {
+font-size: 1.35rem;
+font-weight: 800;
+letter-spacing: -0.03em;
+color: var(--blue-dark);
+}
+
+.brand-text span {
+font-size: 0.86rem;
+font-weight: 600;
+color: var(--orange-main);
+text-transform: uppercase;
+letter-spacing: 0.12em;
+}
+
+.nav-links {
+display: flex;
+align-items: center;
+gap: 26px;
+}
+
+.nav-links a {
+font-size: 0.96rem;
+font-weight: 600;
+color: var(--text-dark);
+transition: 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+color: var(--blue-main);
+}
+
+.nav-actions {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border: none;
+border-radius: 999px;
+padding: 14px 24px;
+font-size: 0.97rem;
+font-weight: 700;
+cursor: pointer;
+transition: 0.25s ease;
+}
+
+.btn-outline {
+background: rgba(31, 111, 197, 0.07);
+color: var(--blue-dark);
+border: 1px solid rgba(31, 111, 197, 0.12);
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--blue-main), var(--blue-dark));
+color: var(--white);
+box-shadow: 0 14px 26px rgba(31, 111, 197, 0.22);
+}
+
+.page-section {
+padding: 56px 0 80px;
+}
+
+.page-badge {
+display: inline-flex;
+align-items: center;
+padding: 10px 16px;
+border-radius: 999px;
+background: rgba(240, 138, 44, 0.12);
+color: #cb6d15;
+font-size: 0.88rem;
+font-weight: 700;
+margin-bottom: 18px;
+}
+
+.page-title {
+font-size: clamp(2.2rem, 4vw, 3.8rem);
+line-height: 1;
+letter-spacing: -0.05em;
+color: var(--blue-dark);
+font-weight: 800;
+margin-bottom: 12px;
+}
+
+.page-text {
+font-size: 1rem;
+color: var(--text-soft);
+max-width: 720px;
+margin-bottom: 28px;
+}
+
+.reservations-grid {
+display: grid;
+gap: 18px;
+}
+
+.reservation-card {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 18px;
+align-items: center;
+padding: 24px;
+background: rgba(255, 255, 255, 0.92);
+border: 1px solid rgba(31, 111, 197, 0.1);
+border-radius: 26px;
+box-shadow: var(--shadow);
+}
+
+.reservation-card h3 {
+font-size: 1.16rem;
+font-weight: 800;
+color: var(--text-dark);
+margin-bottom: 10px;
+}
+
+.reservation-meta {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+margin-bottom: 10px;
+}
+
+.meta-chip {
+display: inline-flex;
+align-items: center;
+padding: 8px 12px;
+border-radius: 999px;
+background: rgba(31, 111, 197, 0.08);
+color: var(--blue-dark);
+font-size: 0.86rem;
+font-weight: 700;
+}
+
+.reservation-desc {
+font-size: 0.95rem;
+color: var(--text-soft);
+}
+
+.reservation-actions {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.pay-btn,
+.delete-btn {
+padding: 12px 18px;
+border-radius: 999px;
+border: none;
+font-size: 0.92rem;
+font-weight: 700;
+cursor: pointer;
+}
+
+.pay-btn {
+background: linear-gradient(135deg, var(--blue-main), var(--blue-dark));
+color: white;
+}
+
+.delete-btn {
+background: rgba(226, 77, 77, 0.12);
+color: #c43a3a;
+border: 1px solid rgba(226, 77, 77, 0.14);
+}
+
+.empty-state {
+padding: 36px 24px;
+background: rgba(255, 255, 255, 0.92);
+border: 1px solid rgba(31, 111, 197, 0.1);
+border-radius: 26px;
+box-shadow: var(--shadow);
+text-align: center;
+font-size: 1rem;
+font-weight: 700;
+color: var(--text-soft);
+display: none;
+}
+
+footer {
+border-top: 1px solid rgba(31, 111, 197, 0.08);
+background: rgba(255, 255, 255, 0.6);
+}
+
+.footer-inner {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+padding: 26px 0;
+}
+
+.footer-brand {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.footer-brand img {
+width: 48px;
+height: 48px;
+object-fit: contain;
+}
+
+.footer-brand strong {
+display: block;
+font-size: 1.05rem;
+color: var(--blue-dark);
+font-weight: 800;
+}
+
+.footer-brand span {
+display: block;
+font-size: 0.84rem;
+color: var(--text-soft);
+font-weight: 600;
+}
+
+.footer-links {
+display: flex;
+align-items: center;
+gap: 22px;
+flex-wrap: wrap;
+}
+
+.footer-links a {
+font-size: 0.95rem;
+font-weight: 600;
+color: var(--text-soft);
+transition: 0.25s ease;
+}
+
+.footer-links a:hover {
+color: var(--blue-main);
+}
+
+@media (max-width: 980px) {
+.navbar {
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.nav-links,
+.nav-actions {
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.reservation-card {
+grid-template-columns: 1fr;
+}
+}
+
+@media (max-width: 640px) {
+.container {
+width: min(100% - 24px, var(--container));
+}
+
+.nav-actions {
+width: 100%;
+}
+
+.nav-actions .btn {
+flex: 1;
+}
+
+.reservation-actions,
+.footer-inner {
+flex-direction: column;
+align-items: flex-start;
+}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<nav class="navbar">
+<a href="index.html" class="brand">
+<img src="img/logo.png" alt="Logo SportBook">
+<div class="brand-text">
+<strong>SportBook</strong>
+<span>Réservez votre terrain</span>
+</div>
+</a>
+
+<div class="nav-links">
+<a href="index.html">Accueil</a>
+<a href="terrains.html">Terrains</a>
+<a href="login.html">Connexion</a>
+<a href="register.html">Inscription</a>
+</div>
+
+<div class="nav-actions">
+<a href="terrains.html" class="btn btn-outline">Voir les terrains</a>
+<a href="reservations.html" class="btn btn-primary">Mes réservations</a>
+</div>
+</nav>
+</div>
+</header>
+
+<main>
+<section class="page-section">
+<div class="container">
+<div class="page-badge">Espace utilisateur</div>
+<h1 class="page-title">Mes réservations</h1>
+<p class="page-text">Retrouvez ici tous vos créneaux réservés, consultez leurs détails et finalisez votre paiement si nécessaire.</p>
+
+<div id="reservationsList" class="reservations-grid"></div>
+<div id="emptyReservations" class="empty-state">Aucune réservation pour le moment.</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<div class="footer-inner">
+<div class="footer-brand">
+<img src="img/logo.png" alt="Logo SportBook">
+<div>
+<strong>SportBook</strong>
+<span>Réservez votre terrain simplement</span>
+</div>
+</div>
+
+<div class="footer-links">
+<a href="index.html">Accueil</a>
+<a href="terrains.html">Terrains</a>
+<a href="login.html">Connexion</a>
+<a href="register.html">Inscription</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/reservations.js"></script>
+</body>
+</html>

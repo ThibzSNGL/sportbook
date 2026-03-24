@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportBook - Réservez votre terrain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+:root {
+--blue-dark: #0f4ea3;
+--blue-main: #1f6fc5;
+--blue-light: #4f9ae3;
+--orange-main: #f08a2c;
+--orange-light: #f7ab4d;
+--text-dark: #123055;
+--text-soft: #5f7390;
+--white: #ffffff;
+--bg-light: #f4f9ff;
+--border: rgba(31, 111, 197, 0.12);
+--shadow: 0 18px 45px rgba(17, 74, 147, 0.12);
+--radius-lg: 28px;
+--radius-md: 18px;
+--radius-sm: 14px;
+--container: 1200px;
+}
+
+html {
+scroll-behavior: smooth;
+}
+
+body {
+font-family: "Inter", sans-serif;
+background:
+radial-gradient(circle at top left, rgba(79, 154, 227, 0.16), transparent 30%),
+radial-gradient(circle at bottom right, rgba(240, 138, 44, 0.14), transparent 25%),
+linear-gradient(180deg, #f7fbff 0%, #edf5ff 100%);
+color: var(--text-dark);
+line-height: 1.6;
+}
+
+a {
+text-decoration: none;
+color: inherit;
+}
+
+img {
+max-width: 100%;
+display: block;
+}
+
+.container {
+width: min(100% - 40px, var(--container));
+margin: 0 auto;
+}
+
+header {
+position: sticky;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(14px);
+background: rgba(255, 255, 255, 0.88);
+border-bottom: 1px solid rgba(31, 111, 197, 0.08);
+}
+
+.navbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 16px 0;
+gap: 20px;
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 14px;
+min-width: 0;
+}
+
+.brand img {
+width: 62px;
+height: 62px;
+object-fit: contain;
+}
+
+.brand-text {
+display: flex;
+flex-direction: column;
+line-height: 1.1;
+}
+
+.brand-text strong {
+font-size: 1.35rem;
+font-weight: 800;
+letter-spacing: -0.03em;
+color: var(--blue-dark);
+}
+
+.brand-text span {
+font-size: 0.86rem;
+font-weight: 600;
+color: var(--orange-main);
+text-transform: uppercase;
+letter-spacing: 0.12em;
+}
+
+.nav-links {
+display: flex;
+align-items: center;
+gap: 26px;
+}
+
+.nav-links a {
+font-size: 0.96rem;
+font-weight: 600;
+color: var(--text-dark);
+transition: 0.25s ease;
+}
+
+.nav-links a:hover {
+color: var(--blue-main);
+}
+
+.nav-actions {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border: none;
+border-radius: 999px;
+padding: 14px 24px;
+font-size: 0.97rem;
+font-weight: 700;
+cursor: pointer;
+transition: 0.25s ease;
+}
+
+.btn-outline {
+background: rgba(31, 111, 197, 0.07);
+color: var(--blue-dark);
+border: 1px solid rgba(31, 111, 197, 0.12);
+}
+
+.btn-outline:hover {
+background: rgba(31, 111, 197, 0.12);
+transform: translateY(-2px);
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--blue-main), var(--blue-dark));
+color: var(--white);
+box-shadow: 0 14px 26px rgba(31, 111, 197, 0.22);
+}
+
+.btn-primary:hover {
+transform: translateY(-2px);
+box-shadow: 0 18px 32px rgba(31, 111, 197, 0.26);
+}
+
+.hero {
+padding: 72px 0 48px;
+}
+
+.hero-grid {
+display: grid;
+grid-template-columns: 1.08fr 0.92fr;
+align-items: center;
+gap: 48px;
+}
+
+.hero-badge {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+padding: 10px 16px;
+border-radius: 999px;
+background: rgba(240, 138, 44, 0.12);
+color: #cb6d15;
+font-size: 0.88rem;
+font-weight: 700;
+margin-bottom: 22px;
+}
+
+.hero-title {
+font-size: clamp(2.7rem, 5vw, 4.9rem);
+line-height: 0.98;
+letter-spacing: -0.05em;
+font-weight: 800;
+max-width: 700px;
+margin-bottom: 22px;
+}
+
+.hero-title .blue {
+color: var(--blue-dark);
+}
+
+.hero-title .orange {
+color: var(--orange-main);
+}
+
+.hero-text {
+font-size: 1.08rem;
+color: var(--text-soft);
+max-width: 610px;
+margin-bottom: 30px;
+}
+
+.hero-actions {
+display: flex;
+flex-wrap: wrap;
+gap: 14px;
+margin-bottom: 34px;
+}
+
+.hero-stats {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 16px;
+max-width: 700px;
+}
+
+.stat-card {
+background: rgba(255, 255, 255, 0.84);
+border: 1px solid var(--border);
+border-radius: var(--radius-md);
+padding: 20px;
+box-shadow: var(--shadow);
+}
+
+.stat-card strong {
+display: block;
+font-size: 1.6rem;
+font-weight: 800;
+color: var(--blue-dark);
+margin-bottom: 4px;
+}
+
+.stat-card span {
+font-size: 0.95rem;
+color: var(--text-soft);
+font-weight: 600;
+}
+
+.hero-visual {
+position: relative;
+}
+
+.hero-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.86));
+  border: 1px solid rgba(31, 111, 197, 0.1);
+  border-radius: 34px;
+  box-shadow: 0 30px 70px rgba(16, 74, 140, 0.14);
+  padding: 34px;
+  overflow: visible;
+}
+
+.hero-card::before {
+content: "";
+position: absolute;
+width: 240px;
+height: 240px;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(79, 154, 227, 0.28), transparent 70%);
+top: -80px;
+right: -70px;
+}
+
+.hero-card::after {
+content: "";
+position: absolute;
+width: 200px;
+height: 200px;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(240, 138, 44, 0.22), transparent 70%);
+bottom: -70px;
+left: -60px;
+}
+
+.logo-box {
+position: relative;
+z-index: 2;
+background: linear-gradient(135deg, rgba(31, 111, 197, 0.06), rgba(240, 138, 44, 0.08));
+border: 1px solid rgba(31, 111, 197, 0.08);
+border-radius: 26px;
+padding: 28px;
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 340px;
+}
+
+.logo-box img {
+width: min(100%, 360px);
+height: auto;
+object-fit: contain;
+filter: drop-shadow(0 18px 40px rgba(19, 91, 176, 0.18));
+}
+
+.floating-card {
+position: absolute;
+z-index: 3;
+background: rgba(255, 255, 255, 0.95);
+border: 1px solid rgba(31, 111, 197, 0.1);
+box-shadow: 0 16px 34px rgba(15, 78, 163, 0.14);
+border-radius: 18px;
+padding: 16px 18px;
+min-width: 180px;
+}
+
+.floating-card strong {
+display: block;
+font-size: 1rem;
+color: var(--blue-dark);
+margin-bottom: 4px;
+}
+
+.floating-card span {
+font-size: 0.88rem;
+color: var(--text-soft);
+font-weight: 600;
+}
+
+.float-top {
+  top: 24px;
+  left: 24px;
+}
+
+.float-bottom {
+  bottom: 24px;
+  right: 24px;
+}
+
+.section {
+padding: 46px 0;
+}
+
+.section-head {
+display: flex;
+align-items: end;
+justify-content: space-between;
+gap: 24px;
+margin-bottom: 28px;
+}
+
+.section-title {
+font-size: clamp(2rem, 3vw, 2.8rem);
+line-height: 1.05;
+letter-spacing: -0.04em;
+font-weight: 800;
+color: var(--blue-dark);
+margin-bottom: 10px;
+}
+
+.section-text {
+max-width: 650px;
+color: var(--text-soft);
+font-size: 1rem;
+}
+
+.sports-grid {
+display: grid;
+grid-template-columns: repeat(4, minmax(0, 1fr));
+gap: 20px;
+}
+
+.sport-card {
+background: rgba(255, 255, 255, 0.88);
+border: 1px solid var(--border);
+border-radius: 24px;
+padding: 26px;
+box-shadow: var(--shadow);
+transition: 0.28s ease;
+}
+
+.sport-card:hover {
+transform: translateY(-6px);
+box-shadow: 0 22px 40px rgba(15, 78, 163, 0.16);
+}
+
+.sport-icon {
+width: 60px;
+height: 60px;
+border-radius: 18px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 1.4rem;
+font-weight: 800;
+margin-bottom: 18px;
+}
+
+.sport-card:nth-child(1) .sport-icon {
+background: rgba(31, 111, 197, 0.12);
+color: var(--blue-main);
+}
+
+.sport-card:nth-child(2) .sport-icon {
+background: rgba(240, 138, 44, 0.14);
+color: var(--orange-main);
+}
+
+.sport-card:nth-child(3) .sport-icon {
+background: rgba(79, 154, 227, 0.14);
+color: var(--blue-light);
+}
+
+.sport-card:nth-child(4) .sport-icon {
+background: rgba(240, 138, 44, 0.12);
+color: #d97513;
+}
+
+.sport-card h3 {
+font-size: 1.14rem;
+font-weight: 800;
+margin-bottom: 8px;
+color: var(--text-dark);
+}
+
+.sport-card p {
+font-size: 0.95rem;
+color: var(--text-soft);
+}
+
+.steps {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 20px;
+}
+
+.step-card {
+position: relative;
+background: rgba(255, 255, 255, 0.9);
+border: 1px solid var(--border);
+border-radius: 24px;
+padding: 30px 26px;
+box-shadow: var(--shadow);
+overflow: hidden;
+}
+
+.step-card::before {
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 5px;
+background: linear-gradient(90deg, var(--blue-main), var(--orange-main));
+}
+
+.step-number {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 52px;
+height: 52px;
+border-radius: 16px;
+background: linear-gradient(135deg, var(--blue-main), var(--orange-main));
+color: var(--white);
+font-size: 1.05rem;
+font-weight: 800;
+margin-bottom: 18px;
+}
+
+.step-card h3 {
+font-size: 1.16rem;
+font-weight: 800;
+margin-bottom: 10px;
+color: var(--blue-dark);
+}
+
+.step-card p {
+color: var(--text-soft);
+font-size: 0.97rem;
+}
+
+.cta {
+padding: 56px 0 80px;
+}
+
+.cta-box {
+position: relative;
+overflow: hidden;
+border-radius: 34px;
+background: linear-gradient(135deg, var(--blue-dark), var(--blue-main) 55%, var(--orange-main));
+padding: 42px;
+box-shadow: 0 28px 60px rgba(15, 78, 163, 0.24);
+}
+
+.cta-box::before {
+content: "";
+position: absolute;
+width: 260px;
+height: 260px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.08);
+top: -100px;
+right: -60px;
+}
+
+.cta-box::after {
+content: "";
+position: absolute;
+width: 180px;
+height: 180px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.08);
+bottom: -70px;
+left: -50px;
+}
+
+.cta-content {
+position: relative;
+z-index: 2;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 24px;
+}
+
+.cta-text h2 {
+font-size: clamp(2rem, 3vw, 2.7rem);
+line-height: 1.05;
+letter-spacing: -0.04em;
+font-weight: 800;
+color: var(--white);
+margin-bottom: 12px;
+}
+
+.cta-text p {
+color: rgba(255, 255, 255, 0.88);
+font-size: 1rem;
+max-width: 650px;
+}
+
+.cta-actions {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+.btn-light {
+background: var(--white);
+color: var(--blue-dark);
+box-shadow: 0 14px 24px rgba(0, 0, 0, 0.12);
+}
+
+.btn-light:hover {
+transform: translateY(-2px);
+}
+
+.btn-soft {
+background: rgba(255, 255, 255, 0.14);
+color: var(--white);
+border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.btn-soft:hover {
+background: rgba(255, 255, 255, 0.22);
+transform: translateY(-2px);
+}
+
+footer {
+border-top: 1px solid rgba(31, 111, 197, 0.08);
+background: rgba(255, 255, 255, 0.6);
+}
+
+.footer-inner {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+padding: 26px 0;
+}
+
+.footer-brand {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.footer-brand img {
+width: 48px;
+height: 48px;
+object-fit: contain;
+}
+
+.footer-brand strong {
+display: block;
+font-size: 1.05rem;
+color: var(--blue-dark);
+font-weight: 800;
+}
+
+.footer-brand span {
+display: block;
+font-size: 0.84rem;
+color: var(--text-soft);
+font-weight: 600;
+}
+
+.footer-links {
+display: flex;
+align-items: center;
+gap: 22px;
+flex-wrap: wrap;
+}
+
+.footer-links a {
+font-size: 0.95rem;
+font-weight: 600;
+color: var(--text-soft);
+transition: 0.25s ease;
+}
+
+.footer-links a:hover {
+color: var(--blue-main);
+}
+
+@media (max-width: 1100px) {
+.hero-grid {
+grid-template-columns: 1fr;
+}
+
+.hero {
+padding-top: 56px;
+}
+
+.hero-visual {
+order: -1;
+}
+
+.float-top {
+left: 10px;
+top: 12px;
+}
+
+.float-bottom {
+right: 10px;
+bottom: 12px;
+}
+}
+
+@media (max-width: 900px) {
+.navbar {
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.nav-links,
+.nav-actions {
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.hero-stats,
+.sports-grid,
+.steps {
+grid-template-columns: 1fr;
+}
+
+.section-head,
+.cta-content,
+.footer-inner {
+flex-direction: column;
+align-items: flex-start;
+}
+
+.cta-box {
+padding: 34px 24px;
+}
+}
+
+@media (max-width: 640px) {
+.container {
+width: min(100% - 24px, var(--container));
+}
+
+.brand img {
+width: 52px;
+height: 52px;
+}
+
+.brand-text strong {
+font-size: 1.15rem;
+}
+
+.brand-text span {
+font-size: 0.76rem;
+}
+
+.hero-title {
+font-size: 2.35rem;
+}
+
+.hero-text {
+font-size: 1rem;
+}
+
+.hero-card {
+padding: 20px;
+border-radius: 26px;
+}
+
+.logo-box {
+padding: 18px;
+min-height: 260px;
+}
+
+.floating-card {
+position: static;
+margin-top: 14px;
+}
+
+.nav-links {
+gap: 16px;
+}
+
+.nav-actions {
+width: 100%;
+}
+
+.nav-actions .btn {
+flex: 1;
+}
+
+.footer-links {
+gap: 14px;
+}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="container">
+<nav class="navbar">
+<a href="index.html" class="brand">
+<img src="img/logo.png" alt="Logo SportBook">
+<div class="brand-text">
+<strong>SportBook</strong>
+<span>Réservez votre terrain</span>
+</div>
+</a>
+
+<div class="nav-links">
+<a href="index.html">Accueil</a>
+<a href="terrains.html">Terrains</a>
+<a href="login.html">Connexion</a>
+<a href="register.html">Inscription</a>
+</div>
+
+<div class="nav-actions">
+<a href="login.html" class="btn btn-outline">Se connecter</a>
+<a href="terrains.html" class="btn btn-primary">Réserver</a>
+</div>
+</nav>
+</div>
+</header>
+
+<main>
+<section class="hero">
+<div class="container">
+<div class="hero-grid">
+<div class="hero-content">
+<div class="hero-badge">Plateforme de réservation sportive</div>
+<h1 class="hero-title">
+<span class="blue">Réservez votre</span>
+<span class="orange">terrain</span>
+<span class="blue">en quelques clics</span>
+</h1>
+<p class="hero-text">
+SportBook vous permet de trouver rapidement le terrain idéal pour vos matchs, vos entraînements et vos moments entre amis. Choisissez votre sport, votre créneau et réservez simplement.
+</p>
+<div class="hero-actions">
+<a href="terrains.html" class="btn btn-primary">Voir les terrains</a>
+<a href="register.html" class="btn btn-outline">Créer un compte</a>
+</div>
+<div class="hero-stats">
+<div class="stat-card">
+<strong>+100</strong>
+<span>terrains disponibles</span>
+</div>
+<div class="stat-card">
+<strong>24/7</strong>
+<span>réservation en ligne</span>
+</div>
+<div class="stat-card">
+<strong>4 sports</strong>
+<span>à découvrir sur la plateforme</span>
+</div>
+</div>
+</div>
+
+<div class="hero-visual">
+<div class="hero-card">
+<div class="floating-card float-top">
+<strong>Réservation rapide</strong>
+<span>Choisissez votre créneau en quelques secondes</span>
+</div>
+<div class="logo-box">
+<img src="img/logo.png" alt="Logo SportBook">
+</div>
+<div class="floating-card float-bottom">
+<strong>Paiement sécurisé</strong>
+<span>Une expérience fluide et simple pour tous</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+<div class="section-head">
+<div>
+<h2 class="section-title">Trouvez le sport qui vous correspond</h2>
+<p class="section-text">
+Une interface moderne pour réserver facilement vos terrains selon vos envies, votre localisation et vos disponibilités.
+</p>
+</div>
+</div>
+
+<div class="sports-grid">
+<div class="sport-card">
+<div class="sport-icon">⚽</div>
+<h3>Football</h3>
+<p>Réservez vos terrains de foot pour vos matchs entre amis ou vos entraînements hebdomadaires.</p>
+</div>
+
+<div class="sport-card">
+<div class="sport-icon">🏀</div>
+<h3>Basketball</h3>
+<p>Trouvez rapidement un terrain disponible pour jouer en intérieur ou en extérieur.</p>
+</div>
+
+<div class="sport-card">
+<div class="sport-icon">🎾</div>
+<h3>Tennis</h3>
+<p>Consultez les créneaux libres et organisez vos sessions sportives sans difficulté.</p>
+</div>
+
+<div class="sport-card">
+<div class="sport-icon">🏸</div>
+<h3>Padel / Badminton</h3>
+<p>Accédez à des terrains adaptés pour vos parties rapides ou vos entraînements réguliers.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+<div class="section-head">
+<div>
+<h2 class="section-title">Comment ça fonctionne ?</h2>
+<p class="section-text">
+La réservation sur SportBook a été pensée pour être simple, rapide et intuitive, du choix du terrain jusqu’à la confirmation.
+</p>
+</div>
+</div>
+
+<div class="steps">
+<div class="step-card">
+<div class="step-number">01</div>
+<h3>Choisissez un terrain</h3>
+<p>Parcourez les terrains disponibles selon votre sport, votre ville et vos préférences.</p>
+</div>
+
+<div class="step-card">
+<div class="step-number">02</div>
+<h3>Sélectionnez un créneau</h3>
+<p>Consultez les horaires disponibles et choisissez le moment qui vous convient le mieux.</p>
+</div>
+
+<div class="step-card">
+<div class="step-number">03</div>
+<h3>Confirmez votre réservation</h3>
+<p>Validez votre demande et retrouvez ensuite toutes vos réservations dans votre espace personnel.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="cta">
+<div class="container">
+<div class="cta-box">
+<div class="cta-content">
+<div class="cta-text">
+<h2>Prêt à réserver votre prochain terrain ?</h2>
+<p>
+Accédez dès maintenant à la liste des terrains disponibles et commencez votre expérience SportBook avec une interface claire, rapide et moderne.
+</p>
+</div>
+<div class="cta-actions">
+<a href="terrains.html" class="btn btn-light">Découvrir les terrains</a>
+<a href="register.html" class="btn btn-soft">S’inscrire</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<div class="footer-inner">
+<div class="footer-brand">
+<img src="img/logo.png" alt="Logo SportBook">
+<div>
+<strong>SportBook</strong>
+<span>Réservez votre terrain simplement</span>
+</div>
+</div>
+
+<div class="footer-links">
+<a href="index.html">Accueil</a>
+<a href="terrains.html">Terrains</a>
+<a href="login.html">Connexion</a>
+<a href="register.html">Inscription</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body>
+</html>
