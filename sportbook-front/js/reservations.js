@@ -1,4 +1,5 @@
-const reservationsContainer = document.getElementById("reservations-list");
+const reservationsContainer = document.getElementById("reservationsList");
+const emptyReservations = document.getElementById("emptyReservations");
 
 function getToken() {
   return localStorage.getItem("sportbook_token");
@@ -7,16 +8,17 @@ function getToken() {
 async function loadReservations() {
   const token = getToken();
 
+  if (!reservationsContainer) return;
+
   if (!token) {
-    if (reservationsContainer) {
-      reservationsContainer.innerHTML = `
-        <div class="empty-state">
-          <h3>Connexion requise</h3>
-          <p>Vous devez être connecté pour voir vos réservations.</p>
-          <a href="login.html" class="btn btn-primary">Se connecter</a>
-        </div>
-      `;
-    }
+    reservationsContainer.innerHTML = `
+      <div class="empty-state">
+        <h3>Connexion requise</h3>
+        <p>Vous devez être connecté pour voir vos réservations.</p>
+        <a href="login.html" class="btn btn-primary">Se connecter</a>
+      </div>
+    `;
+    if (emptyReservations) emptyReservations.style.display = "none";
     return;
   }
 
@@ -30,14 +32,26 @@ async function loadReservations() {
     const data = await response.json();
 
     if (!response.ok) {
-      reservationsContainer.innerHTML = "<p>Impossible de charger vos réservations.</p>";
+      reservationsContainer.innerHTML = `
+        <div class="empty-state">
+          <h3>Erreur</h3>
+          <p>${data.message || "Impossible de charger vos réservations."}</p>
+        </div>
+      `;
+      if (emptyReservations) emptyReservations.style.display = "none";
       return;
     }
 
     renderReservations(data);
   } catch (error) {
     console.error("Erreur loadReservations :", error);
-    reservationsContainer.innerHTML = "<p>Erreur serveur lors du chargement des réservations.</p>";
+    reservationsContainer.innerHTML = `
+      <div class="empty-state">
+        <h3>Erreur serveur</h3>
+        <p>Impossible de contacter le serveur.</p>
+      </div>
+    `;
+    if (emptyReservations) emptyReservations.style.display = "none";
   }
 }
 
@@ -45,15 +59,12 @@ function renderReservations(reservations) {
   if (!reservationsContainer) return;
 
   if (!reservations.length) {
-    reservationsContainer.innerHTML = `
-      <div class="empty-state">
-        <h3>Aucune réservation</h3>
-        <p>Vous n’avez encore aucune réservation sur SportBook.</p>
-        <a href="terrains.html" class="btn btn-primary">Voir les terrains</a>
-      </div>
-    `;
+    reservationsContainer.innerHTML = "";
+    if (emptyReservations) emptyReservations.style.display = "block";
     return;
   }
+
+  if (emptyReservations) emptyReservations.style.display = "none";
 
   reservationsContainer.innerHTML = reservations.map(reservation => `
     <div class="reservation-card">
