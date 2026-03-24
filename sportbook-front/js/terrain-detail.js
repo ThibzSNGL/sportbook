@@ -1,108 +1,153 @@
-const fakeTerrains = [
-{
-id: 1,
-nom: "Five Arena",
-sport: "Football",
-ville: "Paris 13",
-prix: 25,
-image: "img/terrain1.jpg",
-description: "Un terrain moderne, spacieux et idéal pour organiser vos matchs entre amis dans de très bonnes conditions."
-},
-{
-id: 2,
-nom: "Padel Club",
-sport: "Padel",
-ville: "Cergy",
-prix: 18,
-image: "img/terrain2.jpg",
-description: "Un espace moderne pensé pour les amateurs de padel, avec une réservation rapide et simple."
-},
-{
-id: 3,
-nom: "Basket Center",
-sport: "Basketball",
-ville: "Créteil",
-prix: 20,
-image: "img/terrain3.jpg",
-description: "Un terrain de basket accessible et agréable pour vos matchs et entraînements."
-},
-{
-id: 4,
-nom: "Tennis Park",
-sport: "Tennis",
-ville: "Nanterre",
-prix: 22,
-image: "img/terrain1.jpg",
-description: "Réservez facilement votre terrain de tennis selon les créneaux disponibles."
+function getToken() {
+  return localStorage.getItem("sportbook_token");
 }
-];
-
-const fakeSlots = [
-"09:00 - 10:00",
-"10:00 - 11:00",
-"14:00 - 15:00",
-"16:00 - 17:00",
-"18:00 - 19:00",
-"20:00 - 21:00"
-];
 
 function getTerrainIdFromUrl() {
-const params = new URLSearchParams(window.location.search);
-return parseInt(params.get("id")) || 1;
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get("id"), 10);
 }
 
-function renderTerrainDetail() {
-const terrainId = getTerrainIdFromUrl();
-const terrain = fakeTerrains.find(t => t.id === terrainId) || fakeTerrains[0];
+let currentTerrain = null;
 
-const detailImage = document.getElementById("detail-image");
-const detailName = document.getElementById("detail-name");
-const detailSport = document.getElementById("detail-sport");
-const detailCity = document.getElementById("detail-city");
-const detailPrice = document.getElementById("detail-price");
-const detailDescription = document.getElementById("detail-description");
-const slotsContainer = document.getElementById("slots-list");
+async function loadTerrainDetail() {
+  const terrainId = getTerrainIdFromUrl();
 
-if (detailImage) detailImage.src = terrain.image;
-if (detailName) detailName.textContent = terrain.nom;
-if (detailSport) detailSport.textContent = terrain.sport;
-if (detailCity) detailCity.textContent = terrain.ville;
-if (detailPrice) detailPrice.textContent = terrain.prix + " € / heure";
-if (detailDescription) detailDescription.textContent = terrain.description;
+  if (!terrainId) {
+    alert("Terrain introuvable.");
+    return;
+  }
 
-if (slotsContainer) {
-slotsContainer.innerHTML = fakeSlots.map(slot => `
-<button class="slot-btn" data-slot="${slot}">
-${slot}
-</button>
-`).join("");
+  const detailImage = document.getElementById("terrainImage");
+  const detailName = document.getElementById("terrainName");
+  const detailSport = document.getElementById("terrainSport");
+  const detailCity = document.getElementById("terrainCity");
+  const detailPrice = document.getElementById("terrainPrice");
+  const detailDescription = document.getElementById("terrainDescription");
+  const detailType = document.getElementById("terrainType");
+  const slotsContainer = document.getElementById("slotList");
+  const detailMessage = document.getElementById("detailMessage");
 
-const slotButtons = document.querySelectorAll(".slot-btn");
-slotButtons.forEach(btn => {
-btn.addEventListener("click", function() {
-slotButtons.forEach(b => b.classList.remove("active"));
-this.classList.add("active");
+  try {
+    const [terrainResponse, creneauxResponse] = await Promise.all([
+      fetch(`${API_URL}/terrains/${terrainId}`),
+      fetch(`${API_URL}/terrains/${terrainId}/creneaux`)
+    ]);
 
-localStorage.setItem("selectedTerrain", JSON.stringify(terrain));
-localStorage.setItem("selectedSlot", this.dataset.slot);
-});
-});
+    const terrainData = await terrainResponse.json();
+    const creneauxData = await creneauxResponse.json();
+
+    if (!terrainResponse.ok) {
+      alert(terrainData.message || "Terrain introuvable.");
+      return;
+    }
+
+    currentTerrain = {
+      id: terrainData.id,
+      nom: terrainData.nom,
+      sport: terrainData.sport,
+      ville: terrainData.localisation,
+      prix: parseFloat(terrainData.prix_heure),
+      image: terrainData.image_url || "img/terrain1.jpg",
+      description: terrainData.description || "Aucune description disponible."
+    };
+
+    if (detailImage) detailImage.src = currentTerrain.image;
+    if (detailName) detailName.textContent = currentTerrain.nom;
+    if (detailSport) detailSport.textContent = currentTerrain.sport;
+    if (detailCity) detailCity.textContent = currentTerrain.ville;
+    if (detailPrice) detailPrice.textContent = `${currentTerrain.prix} € / heure`;
+    if (detailDescription) detailDescription.textContent = currentTerrain.description;
+    if (detailType) detailType.textContent = currentTerrain.sport;
+
+    if (slotsContainer) {
+      const availableSlots = Array.isArray(creneauxData)
+        ? creneauxData.filter(creneau => creneau.disponible)
+        : [];
+
+      if (!availableSlots.length) {
+        slotsContainer.innerHTML = "<p>Aucun créneau disponible pour ce terrain.</p>";
+        return;
+      }
+
+      slotsContainer.innerHTML = availableSlots.map(creneau => {
+        const label = `${creneau.date} • ${creneau.heure_debut.slice(0, 5)} - ${creneau.heure_fin.slice(0, 5)}`;
+        return `
+          <div class="slot-item">
+            <div class="slot-info">
+              <strong>${creneau.date}</strong>
+              <span>${creneau.heure_debut.slice(0, 5)} - ${creneau.heure_fin.slice(0, 5)}</span>
+            </div>
+            <button class="reserve-slot-btn" data-id="${creneau.id}" data-label="${label}">
+              Réserver
+            </button>
+          </div>
+        `;
+      }).join("");
+
+      const reserveButtons = document.querySelectorAll(".reserve-slot-btn");
+
+      reserveButtons.forEach(btn => {
+        btn.addEventListener("click", async function () {
+          const token = getToken();
+
+          if (!token) {
+            alert("Vous devez être connecté pour réserver.");
+            window.location.href = "login.html";
+            return;
+          }
+
+          const creneauId = parseInt(this.dataset.id, 10);
+          const slotLabel = this.dataset.label;
+
+          try {
+            const response = await fetch(`${API_URL}/reservations`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                terrain_id: currentTerrain.id,
+                creneau_id: creneauId
+              })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              if (detailMessage) {
+                detailMessage.textContent = data.message || "Erreur lors de la réservation.";
+                detailMessage.className = "message error";
+              }
+              return;
+            }
+
+            localStorage.setItem("selectedReservationId", data.reservation.id);
+            localStorage.setItem("selectedTerrain", JSON.stringify(currentTerrain));
+            localStorage.setItem("selectedSlot", slotLabel || "");
+
+            if (detailMessage) {
+              detailMessage.textContent = "Réservation créée. Redirection vers le paiement...";
+              detailMessage.className = "message success";
+            }
+
+            setTimeout(() => {
+              window.location.href = "paiement.html";
+            }, 1000);
+          } catch (error) {
+            console.error("Erreur réservation :", error);
+            if (detailMessage) {
+              detailMessage.textContent = "Impossible de contacter le serveur.";
+              detailMessage.className = "message error";
+            }
+          }
+        });
+      });
+    }
+  } catch (error) {
+    console.error("Erreur loadTerrainDetail :", error);
+    alert("Erreur lors du chargement du terrain.");
+  }
 }
-}
 
-const reserveButton = document.getElementById("reserve-btn");
-
-if (reserveButton) {
-reserveButton.addEventListener("click", function() {
-const selectedSlot = localStorage.getItem("selectedSlot");
-
-if (!selectedSlot) {
-alert("Veuillez sélectionner un créneau avant de continuer.");
-return;
-}
-
-window.location.href = "paiement.html";
-});
-}
-
-renderTerrainDetail();
+loadTerrainDetail();
