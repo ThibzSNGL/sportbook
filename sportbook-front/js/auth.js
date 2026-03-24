@@ -79,11 +79,7 @@ if (loginForm) {
 if (registerForm) {
   registerForm.addEventListener("submit", async function (e) {
     e.preventDefault();
-    console.log("firstName:", document.getElementById("firstName"));
-    console.log("lastName:", document.getElementById("lastName"));
-    console.log("email:", document.getElementById("email"));
-    console.log("password:", document.getElementById("password"));
-    console.log("confirm-password:", document.getElementById("confirm-password"));
+
 
     const firstName = document.getElementById("firstName").value.trim();
     const lastName = document.getElementById("lastName").value.trim();
