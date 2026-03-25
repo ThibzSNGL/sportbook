@@ -84,9 +84,13 @@ function renderTerrains(terrains) {
   terrainsAdminList.innerHTML = terrains.map(terrain => `
     <div class="terrain-admin-card" data-id="${terrain.id}">
       <h3>${terrain.nom}</h3>
-      <p><strong>Sport :</strong> ${terrain.sport}</p>
-      <p><strong>Localisation :</strong> ${terrain.localisation}</p>
-      <p><strong>Prix :</strong> ${terrain.prix_heure} € / heure</p>
+
+      <div class="terrain-admin-meta">
+        <span class="meta-chip">${terrain.sport}</span>
+        <span class="meta-chip">${terrain.localisation}</span>
+        <span class="meta-chip">${terrain.prix_heure} € / h</span>
+      </div>
+
       <p><strong>Description :</strong> ${terrain.description || "Aucune description"}</p>
       <p><strong>Image :</strong> ${terrain.image_url || "Aucune image"}</p>
 
@@ -95,7 +99,6 @@ function renderTerrains(terrains) {
         <button class="delete-btn" data-id="${terrain.id}">Supprimer</button>
       </div>
     </div>
-    <hr />
   `).join("");
 
   const editButtons = document.querySelectorAll(".edit-btn");
