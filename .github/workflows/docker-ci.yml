@@ -1,0 +1,21 @@
+name: SportBook Docker CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Construire l'image backend
+        run: docker build -t sportbook-backend ./sportbook-backend
+
+      - name: Construire l'image frontend
+        run: docker build -t sportbook-front ./sportbook-front
