@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./sportbook-backend
+    container_name: sportbook-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./sportbook-backend/.env
+
+  frontend:
+    build: ./sportbook-front
+    container_name: sportbook-front
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
